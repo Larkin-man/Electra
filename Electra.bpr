@@ -4,15 +4,17 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="Electra.exe"/>
-    <OBJFILES value="Electra.obj MainCode.obj"/>
+    <OBJFILES value="Electra.obj ElectraMethod.obj MainCode.obj"/>
     <RESFILES value="Electra.res"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES) MainCode.dfm"/>
     <LIBFILES value=""/>
-    <LIBRARIES value="Package1.lib vclx.lib bcbsmp.lib rtl.lib vcl.lib"/>
-    <SPARELIBS value="vcl.lib rtl.lib bcbsmp.lib vclx.lib Package1.lib"/>
+    <LIBRARIES value="vcldb.lib dbrtl.lib AdvSpinEditPkgC6.lib Package1.lib vclx.lib bcbsmp.lib 
+      rtl.lib vcl.lib"/>
+    <SPARELIBS value="vcl.lib rtl.lib bcbsmp.lib vclx.lib Package1.lib AdvSpinEditPkgC6.lib 
+      dbrtl.lib vcldb.lib"/>
     <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
       vcldbx.bpi ibxpress.bpi dsnap.bpi cds.bpi bdecds.bpi qrpt.bpi 
       visualclx.bpi visualdbclx.bpi dsnapcrba.bpi dsnapcon.bpi bcbsmp.bpi 
@@ -30,19 +32,20 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="NO_STRICT"/>
     <MAINSOURCE value="Electra.cpp"/>
-    <INCLUDEPATH value="$(BCB)\projects\winxp;&quot;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра&quot;;&quot;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;..\Графика;..\Окошки;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="$(BCB)\Projects\Lib;$(BCB)\projects\winxp;&quot;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра&quot;;&quot;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;..\Графика;..\Окошки;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <INCLUDEPATH value="$(BCB)\lib\advspineditc6;&quot;C:\Program Files\Borland\CBuilder6\Bin&quot;;$(BCB)\projects\winxp;&quot;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра&quot;;&quot;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;..\Графика;..\Окошки;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="$(BCB)\lib\advspineditc6;&quot;C:\Program Files\Borland\CBuilder6\Bin&quot;;$(BCB)\Projects\Lib;$(BCB)\projects\winxp;&quot;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра&quot;;&quot;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS&quot;;&quot;C:\Program Files\Borland\CBuilder6\Projects&quot;;..\Графика;..\Окошки;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-I$(BCB)\projects\winxp 
+    <IDLCFLAGS value="-I$(BCB)\lib\advspineditc6 -I&quot;C:\Program Files\Borland\CBuilder6\Bin&quot; 
+      -I$(BCB)\projects\winxp 
       -I&quot;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра&quot; 
       -I&quot;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS&quot; 
       -I&quot;C:\Program Files\Borland\CBuilder6\Projects&quot; -I..\Графика -I..\Окошки 
       -I$(BCB)\include -I$(BCB)\include\vcl -src_suffix cpp -D_DEBUG -boa"/>
-    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
-      -tW -tWM"/>
+    <CFLAG1 value="-vGc -vGt -vGd -Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k 
+      -y -v -vi- -c -tW -tWM"/>
     <PFLAGS value="-$Y+ -$W -$O- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
     <AFLAGS value="/mx /w2 /zi"/>
@@ -52,12 +55,13 @@
   <LINKER>
     <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
     <ALLRES value="$(RESFILES)"/>
-    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
+    <ALLLIB value="cg32.lib $(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
     <OTHERFILES value=""/>
   </LINKER>
   <FILELIST>
       <FILE FILENAME="Electra.res" FORMNAME="" UNITNAME="Electra.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="Electra.cpp" FORMNAME="" UNITNAME="Electra" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ElectraMethod.cpp" FORMNAME="" UNITNAME="ElectraMethod" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="MainCode.cpp" FORMNAME="Form1" UNITNAME="MainCode" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
@@ -70,7 +74,7 @@ AutoIncBuild=1
 MajorVer=3
 MinorVer=1
 Release=0
-Build=19
+Build=20
 Debug=0
 PreRelease=1
 Special=0
@@ -81,28 +85,27 @@ CodePage=1251
 
 [Version Info Keys]
 CompanyName=СФУ
-FileDescription=Метод Электра
-FileVersion=0.1.0.6
-InternalName=Метод Электра
+FileDescription=Электра
+FileVersion=1.0.0.20
+InternalName=Электра
 LegalCopyright=Copyright © 2012 Aleksey Aponasenko
 LegalTrademarks=
-OriginalFilename=Electre.exe
-ProductName=Дипломная работа
-ProductVersion=0.1
+OriginalFilename=Electra.exe
+ProductName=
+ProductVersion=1.0
 Comments=mail:  psylonaut@mail.ru
 
-[Excluded Packages]
-c:\program files\borland\cbuilder6\Bin\idefilters60.bpl=IDE Filter for CPP32
-
 [HistoryLists\hlIncludePath]
-Count=2
-Item0=$(BCB)\projects\winxp;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\include;$(BCB)\include\vcl
-Item1=C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\include;$(BCB)\include\vcl
+Count=3
+Item0=$(BCB)\lib\advspineditc6;C:\Program Files\Borland\CBuilder6\Bin;$(BCB)\projects\winxp;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\include;$(BCB)\include\vcl
+Item1=$(BCB)\projects\winxp;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\include;$(BCB)\include\vcl
+Item2=C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\include;$(BCB)\include\vcl
 
 [HistoryLists\hlLibraryPath]
-Count=2
-Item0=$(BCB)\Projects\Lib;$(BCB)\projects\winxp;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\lib\obj;$(BCB)\lib
-Item1=C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\lib\obj;$(BCB)\lib
+Count=3
+Item0=$(BCB)\lib\advspineditc6;C:\Program Files\Borland\CBuilder6\Bin;$(BCB)\Projects\Lib;$(BCB)\projects\winxp;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\lib\obj;$(BCB)\lib
+Item1=$(BCB)\Projects\Lib;$(BCB)\projects\winxp;C:\Documents and Settings\Алекс\Мои документы\Билдер\Электра;C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\lib\obj;$(BCB)\lib
+Item2=C:\PROGRAM FILES\BORLAND\CBUILDER6\OBJREPOS;C:\Program Files\Borland\CBuilder6\Projects;..\Графика;..\Окошки;$(BCB)\lib\obj;$(BCB)\lib
 
 [HistoryLists\hlDebugSourcePath]
 Count=1
@@ -130,7 +133,7 @@ RemoteDebug=0
 [Compiler]
 ShowInfoMsgs=0
 LinkDebugVcl=0
-LinkCGLIB=0
+LinkCGLIB=1
 
 [CORBA]
 AddServerUnit=1

@@ -69,3 +69,4 @@ __recovery/
 modules/
 Release/
 *.ico
+*.cgl

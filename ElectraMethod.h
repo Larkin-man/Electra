@@ -7,122 +7,86 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//---------------------------------------------------------------------------
 #ifndef ElectraMethodH
 #define ElectraMethodH
-#include <dstring.h>
+//---------------------------------------------------------------------------
+//Включай только для ShowMessage
+//#include <system.hpp>
+//#include <Dialogs.hpp>
+//#include <dstring.h>
+//#include <conio.h>  //*/
+#include <stdio.h>
+#include <alloc.h>
 
-//int **Ratings;
-//int A, K;
-
-class BasicParams
+template <class T> class BasicParams
 {
 private:
-         
+
 protected:
-
-public:
-   //__property unsigned int Count = {read=Fcount, w
-   AnsiString Name; 
-};
-
-
-class EAlternatives
-{
-private:
-   BasicParams *Alt;
-   unsigned int count;
+   T *Data;
+   int *FCount;
    int ***Ratings;
    int *A, *K;
-   
-protected:
+   void NewRatings(const int &nAlt, const int &nKrit); //[A][K]
 
 public:
-   EAlternatives()//int** &sRatings, int &sA, int &sK)
-   {
-      ShowMessage("yes");
-      //A = &sA;
-      //K = &sK;
-      //Ratings = &sRatings;
-      Alt = NULL;
-      count = 0;  
-   }
-   ~EAlternatives()
-   {
-      if ( Alt )
-         free ( Alt );
-      count = 0;
-   }
-   
-   void New(unsigned int Count)
-   {
-      if ( Alt )
-         Alt = (BasicParams*)realloc( Alt, Count * sizeof(BasicParams));
-      else
-         Alt = (BasicParams*)malloc(Count * sizeof(BasicParams));
-      count = Count;
-      /*if (K != 0) 
-         if (A)
-            Ratings = (int*)realloc( Ratings, Count * sizeof(int));
-         else
-            Ratings = (int*)malloc( Count * sizeof(int));      */
+   BasicParams(int &sA, int &sK, int** &sRatings, bool CountIsAorK);
+   ~BasicParams();
+   int GetCount() { return *FCount; }
+   __property int Count = {read = GetCount, write = New};
+   void New(int count);
 
-   }
-
-   void AddI()
-   {
-      unsigned int g = GetCount();
-   }
-   unsigned int GetCount()
-   {
-      return count;
-   }
-   BasicParams& operator[]( int i )
-   {  return Alt[i];   }
-
-   const BasicParams& operator[]( int i ) const
-   {  return Alt[i];   }
-
+   T& operator[]( int i )   {      return Data[i];   }
+   const T& operator[]( int i ) const   {      return Data[i];   }
 };
 
+typedef struct
+{
+   char *name;
+} DataAlternatives;
+
+typedef class DataKrit
+{
+public:
+   char *name;
+   int weight;
+   int scale;
+   DataKrit()
+   {
+      ShowMessage("constr DataKrit");
+   }
+
+} MemKrit;
 
 class Electra
 {
 private:
-   int A,K;
    int **Ratings;
+   int AltCount, KritCount; //Не записывать
+   int AIndexes;
+   int **FConsentIndex;
 
 protected:
+   int GetRating (int i, int j);
+   void SetRating (int i, int j, int value);
+   int CheckIndexes(int Kidx, int Aidx);
+   int GetConsentIndex (int i, int j);
+   void SetConsentIndex (int i, int j, int value);
 
-public:
-   Electra()
-   {
-      ShowMessage("electra const");
-      A = 0;
-      K = 0;
-      Ratings = 0;
-   }
-   EAlternatives Alternatives;
-   void Run()
-   {
-   }
+public: 
+   Electra();
+   ~Electra();
+   __property int A = {read = AltCount };
+   __property int K = {read = KritCount };
+   BasicParams <DataAlternatives> Alternatives;
+   BasicParams <MemKrit> Kriterias;
+   __property int Rating [int i] [int j] = {read=GetRating, write=SetRating}; //Rating[A][K]
+   __property int ConsentIndex [int i] [int j] = {read=GetConsentIndex, write=SetConsentIndex}; //Rating[Ai][Aj] i domine nad j
+   void CreateIndexes();
+   void Run();
+   bool SaveAsText(char *FileName);
+   bool LoadFromText(char *FileName);
 
-};
-
-/*
-if ( Data )
-   {
-      Data = (int**)realloc(Data, n * sizeof(int*));
-         for (int i=0;i<n;i++)
-            Data[i] = (int*)realloc(Data[i], m * sizeof(int));
-   }
-         //Data = (int**)realloc( Data, Count * sizeof(int));
-      else
-      {
-         Data = (int**)malloc(n * sizeof(int*));
-         for (int i=0;i<n;i++)
-            Data[i] = (int*)malloc(m * sizeof(int));
-      }      
-	*/
-
+};  
 #endif
- 
