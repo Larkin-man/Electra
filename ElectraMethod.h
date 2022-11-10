@@ -108,6 +108,7 @@ public:
 
 };
 
+/*
 if ( Data )
    {
       Data = (int**)realloc(Data, n * sizeof(int*));
@@ -121,6 +122,7 @@ if ( Data )
          for (int i=0;i<n;i++)
             Data[i] = (int*)malloc(m * sizeof(int));
       }      
+	*/
 
 #endif
  
