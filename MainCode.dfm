@@ -1,32 +1,33 @@
 object Form1: TForm1
-  Left = 233
-  Top = 124
-  Width = 696
-  Height = 439
+  Left = 102
+  Top = 118
+  Width = 700
+  Height = 441
   Caption = #1069#1083#1077#1082#1090#1088#1072
   Color = clBtnFace
+  Constraints.MinHeight = 300
+  Constraints.MinWidth = 500
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -20
+  Font.Height = -16
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  OnClose = FormClose
-  PixelsPerInch = 120
-  TextHeight = 25
+  PixelsPerInch = 96
+  TextHeight = 20
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 688
+    Width = 692
     Height = 40
-    ButtonHeight = 29
+    ButtonHeight = 36
     Caption = 'ToolBar1'
     TabOrder = 0
     object OpenBtn: TSpeedButton
       Left = 0
       Top = 2
       Width = 36
-      Height = 29
+      Height = 36
       Glyph.Data = {
         36180000424D3618000000000000360000002800000040000000200000000100
         18000000000000180000120B0000120B0000000000000000000080FF0080FF00
@@ -229,7 +230,7 @@ object Form1: TForm1
       Left = 36
       Top = 2
       Width = 36
-      Height = 29
+      Height = 36
       Glyph.Data = {
         36180000424D3618000000000000360000002800000040000000200000000100
         18000000000000180000252E0000252E0000000000000000000080FF0080FF00
@@ -428,395 +429,417 @@ object Form1: TForm1
       NumGlyphs = 2
       OnClick = SaveBtnClick
     end
-    object Newed: TStaticText
-      Left = 72
-      Top = 2
-      Width = 65
-      Height = 29
-      Caption = 'Newed'
-      TabOrder = 0
-    end
   end
   object PageControl1: TPageControl
     Left = 0
     Top = 40
-    Width = 688
-    Height = 360
-    ActivePage = TabSheet3
+    Width = 692
+    Height = 367
+    ActivePage = SheetRun
     Align = alClient
-    TabIndex = 2
+    TabIndex = 3
     TabOrder = 1
-    OnChange = PageControl1Change
     OnChanging = PageControl1Changing
-    object TabSheet1: TTabSheet
+    object SheetBegins: TTabSheet
       Caption = #1053#1040#1063#1040#1051#1054
-      object Changed0: TLabel
-        Left = 456
-        Top = 24
-        Width = 92
-        Height = 25
-        Caption = 'Changed0'
+      object Splitter1: TSplitter
+        Left = 246
+        Top = 41
+        Width = 5
+        Height = 291
+        Cursor = crHSplit
+        Align = alRight
       end
       object Alternatives: TStringGrid
-        Left = 10
-        Top = 60
-        Width = 291
-        Height = 391
+        Left = 0
+        Top = 41
+        Width = 246
+        Height = 291
+        Align = alClient
         ColCount = 2
+        Constraints.MinWidth = 245
         DefaultColWidth = 120
-        FixedCols = 0
         RowCount = 6
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goAlwaysShowEditor]
         ScrollBars = ssNone
         TabOrder = 0
+        OnKeyPress = AlternativesKeyPress
+        ColWidths = (
+          32
+          196)
       end
       object Kriterias: TStringGrid
-        Left = 310
-        Top = 60
-        Width = 501
-        Height = 391
+        Left = 251
+        Top = 41
+        Width = 433
+        Height = 291
+        Align = alRight
         ColCount = 4
-        FixedCols = 0
+        Constraints.MinWidth = 400
         RowCount = 8
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goAlwaysShowEditor]
         ScrollBars = ssNone
         TabOrder = 1
-        OnSetEditText = KriteriasSetEditText
+        OnKeyPress = KriteriasKeyPress
+        ColWidths = (
+          28
+          212
+          64
+          64)
       end
-      object SetNames: TButton
-        Left = 670
-        Top = 350
-        Width = 124
-        Height = 31
-        Caption = 'SetNames'
+      object Panel3: TPanel
+        Left = 0
+        Top = 0
+        Width = 684
+        Height = 41
+        Align = alTop
+        BevelOuter = bvNone
         TabOrder = 2
-        OnClick = SetNamesClick
-      end
-      object nAlt: TCSpinEdit
-        Left = 72
-        Top = 16
-        Width = 121
-        Height = 36
-        TabOrder = 3
-        Value = 5
-        OnChange = nAltChange
-      end
-      object nKrit: TCSpinEdit
-        Left = 320
-        Top = 16
-        Width = 121
-        Height = 36
-        TabOrder = 4
-        Value = 7
-        OnChange = nKritChange
+        object LA: TLabel
+          Left = 8
+          Top = 8
+          Width = 106
+          Height = 20
+          Caption = #1040#1083#1100#1090#1077#1088#1085#1072#1090#1080#1074':'
+        end
+        object LK: TLabel
+          Left = 208
+          Top = 8
+          Width = 86
+          Height = 20
+          Caption = #1050#1088#1080#1090#1077#1088#1080#1077#1074':'
+        end
+        object nAlt: TCSpinEdit
+          Left = 130
+          Top = 5
+          Width = 63
+          Height = 30
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          MaxValue = 999
+          MinValue = 1
+          ParentFont = False
+          TabOrder = 0
+          Value = 5
+          OnChange = nAltChange
+        end
+        object nKrit: TCSpinEdit
+          Left = 304
+          Top = 5
+          Width = 65
+          Height = 30
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -16
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          MaxValue = 999
+          MinValue = 1
+          ParentFont = False
+          TabOrder = 1
+          Value = 7
+          OnChange = nKritChange
+        end
       end
     end
-    object TabSheet2: TTabSheet
+    object SheetRatings: TTabSheet
       Caption = #1054#1094#1077#1085#1082#1080
       ImageIndex = 1
-      OnShow = TabSheet2Show
+      DesignSize = (
+        684
+        332)
       object Ratings: TStringGrid
         Left = 0
         Top = 0
-        Width = 680
-        Height = 320
+        Width = 684
+        Height = 332
         Align = alClient
         DefaultColWidth = 100
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowSizing, goColSizing, goEditing, goAlwaysShowEditor]
         TabOrder = 0
-        OnSetEditText = RatingsSetEditText
-      end
-      object BitBtn1: TBitBtn
-        Left = 43
-        Top = 4
-        Width = 33
-        Height = 27
-        Caption = #1087
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -22
-        Font.Name = 'Constantia'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-        OnClick = BitBtn1Click
-      end
-      object Panel1: TPanel
-        Left = 10
-        Top = 226
-        Width = 651
-        Height = 151
-        Caption = #1058#1077#1089#1090#1086#1074#1072#1103
-        TabOrder = 2
-        object Changed1: TLabel
-          Left = 208
-          Top = 8
-          Width = 92
-          Height = 25
-          Caption = 'Changed1'
-        end
-        object EditK: TEdit
-          Left = 60
-          Top = 26
-          Width = 91
-          Height = 33
-          TabOrder = 0
-          Text = 'EditK'
-        end
-        object StaticText1: TStaticText
-          Left = 20
-          Top = 31
-          Width = 33
-          Height = 29
-          Caption = 'Krit'
-          TabOrder = 1
-        end
-        object StaticText2: TStaticText
-          Left = 30
-          Top = 71
-          Width = 27
-          Height = 29
-          Caption = 'Alt'
-          TabOrder = 2
-        end
-        object EditA: TEdit
-          Left = 60
-          Top = 66
-          Width = 91
-          Height = 33
-          TabOrder = 3
-          Text = 'Edit1'
-        end
-        object Button5: TButton
-          Left = 200
-          Top = 30
-          Width = 94
-          Height = 31
-          Caption = 'Set'
-          TabOrder = 4
-          OnClick = Button5Click
-        end
-        object Button6: TButton
-          Left = 200
-          Top = 60
-          Width = 94
-          Height = 31
-          Caption = 'Get'
-          TabOrder = 5
-          OnClick = Button6Click
-        end
-        object NewA: TButton
-          Left = 470
-          Top = 40
-          Width = 94
-          Height = 31
-          Caption = 'NewA'
-          TabOrder = 6
-          OnClick = NewAClick
-        end
-        object AltNew: TLabeledEdit
-          Left = 420
-          Top = 36
-          Width = 51
-          Height = 33
-          EditLabel.Width = 204
-          EditLabel.Height = 25
-          EditLabel.Caption = #1057#1086#1079#1076#1072#1090#1100' '#1072#1083#1100#1090#1077#1088#1085#1072#1090#1080#1074
-          LabelPosition = lpAbove
-          LabelSpacing = 3
-          TabOrder = 7
-          Text = '5'
-        end
-        object KritNew: TLabeledEdit
-          Left = 420
-          Top = 106
-          Width = 51
-          Height = 33
-          EditLabel.Width = 182
-          EditLabel.Height = 25
-          EditLabel.Caption = #1057#1086#1079#1076#1072#1090#1100' '#1082#1088#1080#1090#1077#1088#1080#1077#1074
-          LabelPosition = lpAbove
-          LabelSpacing = 3
-          TabOrder = 8
-          Text = '7'
-        end
-        object NewK: TButton
-          Left = 470
-          Top = 110
-          Width = 94
-          Height = 31
-          Caption = 'NewK'
-          TabOrder = 9
-          OnClick = NewKClick
-        end
-        object Button4: TButton
-          Left = 10
-          Top = 120
-          Width = 94
-          Height = 31
-          Caption = 'Button4'
-          TabOrder = 10
-          OnClick = Button4Click
-        end
+        OnKeyPress = RatingsKeyPress
+        RowHeights = (
+          24
+          24
+          24
+          24
+          24)
       end
       object GetRatBtn: TButton
-        Left = 670
-        Top = 360
-        Width = 171
-        Height = 31
+        Left = 520
+        Top = 290
+        Width = 149
+        Height = 25
+        Anchors = [akRight, akBottom]
         Caption = #1042#1079#1103#1090#1100' '#1080#1079' '#1087#1072#1084#1103#1090#1080
-        TabOrder = 3
+        TabOrder = 1
         OnClick = GetRatBtnClick
       end
       object SetRatBtn: TButton
-        Left = 660
-        Top = 320
-        Width = 181
-        Height = 31
+        Left = 520
+        Top = 258
+        Width = 149
+        Height = 25
+        Anchors = [akRight, akBottom]
         Caption = #1047#1072#1087#1080#1089#1072#1090#1100' '#1074' '#1087#1072#1084#1103#1090#1100
-        TabOrder = 4
+        TabOrder = 2
         OnClick = SetRatBtnClick
       end
+      object ModRat: TStaticText
+        Left = 16
+        Top = 3
+        Width = 65
+        Height = 22
+        AutoSize = False
+        Caption = 'Modified'
+        TabOrder = 3
+      end
     end
-    object TabSheet3: TTabSheet
+    object SheetIndexes: TTabSheet
       Caption = #1048#1085#1076#1077#1082#1089#1099
       ImageIndex = 2
-      object Label5: TLabel
-        Left = 114
-        Top = 14
-        Width = 170
-        Height = 25
-        Caption = #1048#1085#1076#1077#1082#1089#1099' '#1089#1086#1075#1083#1072#1089#1080#1103
+      object Splitter2: TSplitter
+        Left = 331
+        Top = 0
+        Width = 5
+        Height = 332
+        Cursor = crHSplit
+        Align = alRight
       end
-      object Label6: TLabel
-        Left = 434
-        Top = 14
-        Width = 192
-        Height = 25
-        Caption = #1048#1085#1076#1077#1082#1089#1099' '#1085#1077#1089#1086#1075#1083#1072#1089#1080#1103
-      end
-      object Soglas: TStringGrid
-        Left = 10
-        Top = 50
-        Width = 400
-        Height = 391
-        DefaultColWidth = 60
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+      object Panel4: TPanel
+        Left = 0
+        Top = 0
+        Width = 331
+        Height = 332
+        Align = alClient
+        BevelOuter = bvNone
         TabOrder = 0
+        object Label5: TLabel
+          Left = 0
+          Top = 0
+          Width = 331
+          Height = 32
+          Align = alTop
+          AutoSize = False
+          Caption = ' '#1048#1085#1076#1077#1082#1089#1099' '#1089#1086#1075#1083#1072#1089#1080#1103
+          Layout = tlCenter
+        end
+        object Soglas: TStringGrid
+          Left = 0
+          Top = 32
+          Width = 331
+          Height = 300
+          Align = alClient
+          DefaultColWidth = 60
+          TabOrder = 0
+        end
       end
-      object NotSoglas: TStringGrid
-        Left = 420
-        Top = 50
-        Width = 400
-        Height = 391
-        DefaultColWidth = 60
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+      object Panel5: TPanel
+        Left = 336
+        Top = 0
+        Width = 348
+        Height = 332
+        Align = alRight
+        BevelOuter = bvNone
         TabOrder = 1
-      end
-      object Run: TButton
-        Left = 16
-        Top = 16
-        Width = 75
-        Height = 25
-        Caption = 'Run'
-        TabOrder = 2
-        OnClick = RunClick
+        object Label3: TLabel
+          Left = 0
+          Top = 0
+          Width = 348
+          Height = 32
+          Align = alTop
+          AutoSize = False
+          Caption = ' '#1048#1085#1076#1077#1082#1089#1099' '#1085#1077#1089#1086#1075#1083#1072#1089#1080#1103
+          Layout = tlCenter
+        end
+        object NotSoglas: TStringGrid
+          Left = 0
+          Top = 32
+          Width = 348
+          Height = 300
+          Align = alClient
+          DefaultColWidth = 60
+          TabOrder = 0
+          RowHeights = (
+            24
+            24
+            24
+            24
+            24)
+        end
+        object RunBtn: TButton
+          Left = 248
+          Top = 5
+          Width = 95
+          Height = 25
+          Caption = #1056#1072#1089#1095#1077#1090
+          TabOrder = 1
+          OnClick = RunBtnClick
+        end
       end
     end
-    object TabSheet4: TTabSheet
+    object SheetRun: TTabSheet
       Caption = #1056#1072#1089#1095#1105#1090#1099
       ImageIndex = 3
+      DesignSize = (
+        684
+        332)
       object Label1: TLabel
-        Left = 100
-        Top = 10
-        Width = 164
-        Height = 25
+        Left = 80
+        Top = 8
+        Width = 137
+        Height = 20
         Caption = #1059#1088#1086#1074#1077#1085#1100' '#1089#1086#1075#1083#1072#1089#1080#1103
       end
       object Label2: TLabel
-        Left = 100
-        Top = 90
-        Width = 186
-        Height = 25
+        Left = 80
+        Top = 72
+        Width = 155
+        Height = 20
         Caption = #1059#1088#1086#1074#1077#1085#1100' '#1085#1077#1089#1086#1075#1083#1072#1089#1080#1103
       end
-      object Label3: TLabel
-        Left = 290
-        Top = 10
-        Width = 59
-        Height = 25
-        Caption = 'Label3'
+      object LabelS: TLabel
+        Left = 232
+        Top = 8
+        Width = 50
+        Height = 20
+        Caption = 'LabelS'
       end
-      object Label4: TLabel
-        Left = 310
-        Top = 90
-        Width = 59
-        Height = 25
-        Caption = 'Label4'
+      object LabelNS: TLabel
+        Left = 248
+        Top = 72
+        Width = 61
+        Height = 20
+        Caption = 'LabelNS'
+      end
+      object LabelSC: TLabel
+        Left = 408
+        Top = 8
+        Width = 81
+        Height = 20
+        Anchors = [akLeft, akTop, akRight]
+        Caption = #1059#1088#1086#1074#1085#1077#1081': #'
+      end
+      object LabelNC: TLabel
+        Left = 408
+        Top = 72
+        Width = 81
+        Height = 20
+        Anchors = [akLeft, akTop, akRight]
+        Caption = #1059#1088#1086#1074#1085#1077#1081': #'
       end
       object TrackBar1: TTrackBar
-        Left = 20
-        Top = 40
-        Width = 401
-        Height = 56
+        Left = 0
+        Top = 32
+        Width = 682
+        Height = 30
+        Align = alCustom
+        Anchors = [akLeft, akTop, akRight]
         Max = 4
         Orientation = trHorizontal
+        PageSize = 1
         Frequency = 1
-        Position = 4
+        Position = 3
         SelEnd = 0
         SelStart = 0
         TabOrder = 0
+        ThumbLength = 24
         TickMarks = tmBottomRight
         TickStyle = tsAuto
         OnChange = TrackBar1Change
       end
       object TrackBar2: TTrackBar
-        Left = 20
-        Top = 120
-        Width = 401
-        Height = 56
+        Left = 0
+        Top = 96
+        Width = 682
+        Height = 32
+        Anchors = [akLeft, akTop, akRight]
         Orientation = trHorizontal
+        PageSize = 1
         Frequency = 1
         Position = 4
         SelEnd = 0
         SelStart = 0
         TabOrder = 1
+        ThumbLength = 24
         TickMarks = tmBottomRight
         TickStyle = tsAuto
         OnChange = TrackBar2Change
       end
       object ListBox1: TListBox
-        Left = 20
-        Top = 180
-        Width = 531
-        Height = 261
-        ItemHeight = 25
+        Left = 0
+        Top = 130
+        Width = 585
+        Height = 201
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        Columns = 2
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ItemHeight = 16
+        ParentFont = False
         TabOrder = 2
       end
-      object ScrollBar1: TScrollBar
-        Left = 440
-        Top = 40
-        Width = 381
-        Height = 21
-        PageSize = 0
+      object Panel1: TPanel
+        Left = 8
+        Top = 55
+        Width = 666
+        Height = 18
+        Anchors = [akLeft, akTop, akRight]
+        BevelOuter = bvNone
+        BorderStyle = bsSingle
         TabOrder = 3
+        object ScrollBar1: TScrollBar
+          Left = 0
+          Top = 0
+          Width = 660
+          Height = 15
+          PageSize = 0
+          TabOrder = 0
+          OnScroll = ScrollBar1Scroll
+        end
       end
-      object ScrollBar2: TScrollBar
-        Left = 440
-        Top = 130
-        Width = 381
-        Height = 21
-        PageSize = 0
+      object Panel2: TPanel
+        Left = 8
+        Top = 119
+        Width = 666
+        Height = 18
+        Anchors = [akLeft, akTop, akRight]
+        BevelOuter = bvNone
+        BorderStyle = bsSingle
         TabOrder = 4
+        object ScrollBar2: TScrollBar
+          Left = 0
+          Top = 0
+          Width = 121
+          Height = 15
+          PageSize = 0
+          TabOrder = 0
+          OnScroll = ScrollBar2Scroll
+        end
       end
-      object Memo1: TMemo
-        Left = 570
-        Top = 250
-        Width = 231
-        Height = 111
-        Lines.Strings = (
-          'Memo1')
+      object Scrolls: TCheckBox
+        Left = 592
+        Top = 144
+        Width = 81
+        Height = 17
+        Caption = 'Scrolls'
         TabOrder = 5
+        OnClick = ScrollsClick
+      end
+      object Calc: TButton
+        Left = 592
+        Top = 168
+        Width = 75
+        Height = 25
+        Caption = 'Calc'
+        TabOrder = 6
+        OnClick = CalcClick
       end
     end
   end
@@ -829,9 +852,13 @@ object Form1: TForm1
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.txt'
-    FileName = 'electra.txt'
+    FileName = 'Electra.txt'
     Filter = #1058#1077#1082#1089#1090#1086#1074#1099#1081' '#1092#1072#1081#1083'|*.txt'
     Left = 408
+    Top = 8
+  end
+  object WinXP1: TWinXP
+    Left = 456
     Top = 8
   end
 end

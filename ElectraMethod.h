@@ -19,55 +19,43 @@
 #include "LarkinArray.h"
 //Динамический массив:
 #include "LarkinArray.h"
-//---------------------------------------------------------------------------
-//BasicParams - Базовый класс для альтернатив и критериев
-template <class T> class BasicParams
-{
-   friend class Electra;
-private:
-   T *Data;
-   int *FCount;
-protected:    
-    int GetCount() { return *FCount; }
-   //int ***pRatings;
-   // int *A, *K;
-   int FCapacity;
-   void (__closure *ElectraNew)();
-   
-public:
-   //BasicParams(int &sCount, void (__closure *AElectraNew)());
-   ~BasicParams();
-   void New(int count);
-   __property int Count = {read = GetCount, write = New};
-   __property int Capacity = {read = FCapacity};
-   T& operator[]( int i )   {      return Data[i];   }
-   const T& operator[]( int i ) const   {      return Data[i];   }
-};
-
+//Квадратная матрица (Индексы согласия, несогласия)
+#define LRArraySimpleType
+#include "LarkinSquareMatrix.h"
+//Матрица (Таблица оценок)
+#define LRArraySimpleType
+#include "LarkinMatrix.h"
 //---------------------------------------------------------------------------
 //ElectraIndexes - Базовый класс для индексов согласия и несогласия
 template <class T> class ElectraIndexes
 {
    friend class Electra;
 private:
-   T **FIndex;
-   int FCapacity;
+   LRSquareMatrix <T> Indexes; //   T **FIndex;
    LRCollectionSort<T> List;
 protected:
-   T GetIndex ( int i,  int j) const;
-   void SetIndex ( int i,  int j, T value);
-   __property T Index [int i][int j] = {read=GetIndex, write=SetIndex};
-   void Create(int Count);
-   int GetListCount()  {      return List.Count;    }
+   void SetIndex (int i,  int j, T value); //Управлление из Электры
+   //Матрица индексов:
+   int GetSize(void) const { return Indexes.Size; }
+   int GetCapacity(void) const { return Indexes.Capacity; }
+   T& GetIndex (int i,  int j);
+   //Отсортированная коллекция индексов:
+   //__property T Index [int i][int j] = {read=GetIndex, write=SetIndex};
+   int GetListCount() const  {      return List.Count;   }
+   int GetListCapacity() const  {      return List.Capacity;   }
+
 public:
    ElectraIndexes();
-   //__property T Index [ int i] [ int j] = {read=GetIndex};
-   //T* operator[](int i) { return FIndex[i]; }
-   //const T& operator[](int i) const { return FIndex[i]; }
-   __property T Indexes [int i][int j] = {read=GetIndex};
+   //Матрица индексов:
+   __property T Index [int i][int j] = {read=GetIndex};
+   __property int Size = { read=GetSize };
+   __property int Capacity = { read=GetCapacity };
+   //T **Base() const { return Indexes.Base; }
+   //Отсортированная коллекция индексов:
    const T& ListIndex(int i) const { return List[i]; }
+   const operator[] (int i) { return List[i]; }
    __property int ListCount = {read=GetListCount};
-   __property int Capacity = {read=FCapacity};
+   __property int ListCapacity = {read=GetListCapacity};
    const T& First() const { return List.First(); }
 	const T& Last() const { return List.Last(); }
    ~ElectraIndexes();
@@ -80,6 +68,8 @@ private:
    char *FName;
    void SetName(char* rhs)
    {
+      //if (rhs == FName)
+      //   return;
       if (FName)
       {
          if ( strlen(rhs) > strlen(FName) )
@@ -90,9 +80,10 @@ private:
          FName = strdup(rhs);
    }
 public:
-   __property char* Name = {read=FName, write=SetName};
-   MemAlt() {  FName = NULL; Core = -1; }
-   ~MemAlt() { free ( FName ); }
+   //__property char* Name = {read=FName, write=SetName};
+   AnsiString Name;
+   MemAlt() {  Core = -1; }
+   ~MemAlt() {  }
    int Core; //Ядро в которое попала альтернатива. Заполняется после расчета
    //Чем выше тем качественней альтернатива. В ядре 0 находятся альтернативы доминируемые по всем параметрам.
 } DataAlternatives;
@@ -106,51 +97,49 @@ public:
 } DataKriterias;
 //------------------------------------------------------
 //Класс Электра//---------------------------------------
-enum ElectraVersion { ElectraI, ElectraII, ElectraIII };
-//enum ElectraStatus { None=0, 
+enum ElectraVersion { ElectraI, ElectraIM, ElectraII, ElectraIII };
+//enum ElectraStatus { None=0,
 
 class Electra
 {
 private:
-   int **Ratings;
-   int A, K; //Не записывать
-   //int ACapacity, KCapacity; //Не записывать
-   //bool FRunOk;
+   LRMatrix <int> Ratings;
    int Core;
    DataAlternatives **Optimal;
+   Electra(const Electra& copy);
+   operator =(const Electra& copy);
 
-protected:
-   int GetRating (int i, int j);
+protected:    
+   int  GetRating (int i, int j);
    void SetRating (int i, int j, int value);
-   bool CheckIndexes(int Kidx, int Aidx);
    void GenerateCore(int Cind, double NCind, int &idx);
    bool VerionComparison();
    DataAlternatives GetOptimal(int i)   {      return *Optimal[i];   }
-   void BaseNew();
+   int GetA(void) { return Alternatives.Count; }
+   int GetK(void) { return Kriterias.Count; }
 
 public:
    Electra();
-   ~Electra();
-   __property  int AltCount = {read = A, write=Alternatives.New };
-   __property  int KritCount = {read = K, write=Kriterias.New};
-   void New(int NewAltCount, int NewKritCount); //[A][K]
-   BasicParams <DataAlternatives> Alternatives;
-   BasicParams <DataKriterias> Kriterias;
-   __property int Rating [int i] [int j] = {read=GetRating, write=SetRating}; //Rating[A][K]
+   __property int A = {read=GetA};
+   __property int K = {read=GetK};
+   LRDynArray <DataAlternatives> Alternatives;
+   LRDynArray <DataKriterias> Kriterias;         
+   __property int Rating [int i][int j] = {read=GetRating, write=SetRating}; //Rating[A][K]
    ElectraIndexes <int> Concordance;
    ElectraIndexes <double> Discordance;
-   void CreateIndexes();
    ElectraVersion Version;
-   void Run();
-   void Clear();
+   int CalcIndexes(); //Возвращает кол-во альтернатив в случае успеха.
    __property DataAlternatives OptimalList [int i] = {read = GetOptimal};   
    bool SaveAsText(char *FileName);
    bool LoadFromText(char *FileName);
    //__property bool RunOk = { read=FRunOk };
    void Calc(); //Должен возвращать лучшую
+   void Clear();
+   ~Electra();
 };
 /*Работа
-1) 
+1) Задать критерии и альтернативы
+Alternatives.Count или [] 
 */
 #endif
 

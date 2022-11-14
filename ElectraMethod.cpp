@@ -17,240 +17,56 @@
 #include <alloc.h>
 #include <string.h>
 #include <mem.h>
+#include <system.hpp>
 #pragma hdrstop   
 #include "ElectraMethod.h"
-//---------------------------------------------------------------------------
-//BasicParams - Базовый класс для альтернатив и критериев
-//---------------------------------------------------------------------------
-//Конструктор с параметрами   
-template<class T> BasicParams<T>::BasicParams(int &sCount, void (__closure *AElectraNew)())
-{
-   Data = NULL;
-   FCapacity = 0;
-   FCount = &sCount;
-   if (sCount > 0)
-      New(sCount);
-   ElectraNew = AElectraNew;     
-}
-//---------------------------------------------
-//New - Изменение кол-ва
-template<class T> void BasicParams<T>::New(int count)
-{
-   *FCount = count;
-   if (FCapacity >= count)
-      return;
-   if ( Data )
-      Data = (T*)realloc( Data, count * sizeof(T));
-   else
-      Data = (T*)malloc(count * sizeof(T));      
-   FCapacity = count;
-   //if ((*A != 0)&&(*K != 0))
-   //ElectraNew();
-}
-//---------------------------------------------
-//Деструктор
-template<class T> BasicParams<T>::~BasicParams()
-{
-   FCapacity = 0;
-   *FCount = 0;
-   if ( Data )
-      free ( Data );
-   Data = NULL;   
-}
-
 //---------------------------------------------------------------------------
 //ElectraIndexes - Базовый класс для индексов согласия и несогласия
 //---------------------------------------------------------------------------
 //Конструктор
 template<class T> ElectraIndexes <T>::ElectraIndexes() : List(true)
 {
-   FIndex = NULL;
-   FCapacity = 0;
-   //List.Duplicates = dupIgnore;
-   //List.Sorted = true;
 }
 //---------------------------------------------
 //template<class T> T GetIndex (int i, int j)
-template<class T> T ElectraIndexes <T>::GetIndex (int i, int j) const
+template<class T> T& ElectraIndexes <T>::GetIndex (int i, int j)
 {
-   //if ((i < 0)||(j < 0))
-   //   return -1;
-   if ((i >= FCapacity)||(j >= FCapacity))
-      return -2;
-   return FIndex[i][j];
+   return Indexes.Cell[i][j];
 }
 //---------------------------------------------
 template<class T> void ElectraIndexes <T>::SetIndex (int i, int j, T value)
 {
-   //if ((i < 0)||(j < 0))
-   //   return ;
-   if ((i >= FCapacity)||(j >= FCapacity))
-      return ;
    List.Add(value);
-   FIndex[i][j] = value;
-}
-//---------------------------------------------
-template<class T> void ElectraIndexes <T>::Create(int Count)
-{
-   if (Count <= FCapacity)
-      return; //нулями фигануть
-   if ( FIndex )
-   {
-      for (int i=0; i<FCapacity; ++i)
-         FIndex[i] = (T*)realloc(FIndex[i], Count * sizeof(T));
-      FIndex = (T**)realloc(FIndex, Count * sizeof(T*));
-      for (int i=FCapacity; i<Count; ++i)
-         FIndex[i] = (T*)malloc(Count * sizeof(T));
-   }
-   else //Первое
-   {
-      FIndex = (T**)malloc(Count * sizeof(T*));
-      for (int i=0; i<Count; i++)
-         FIndex[i] = (T*)malloc(Count * sizeof(T));
-   }
-   //Инициализация диагонали нулями
-   for (int i=FCapacity; i<Count; i++)
-      FIndex[i][i] = 0;/*
-      for (int j=FCapacity; j<Count; j++)
-         FIndex[i][j] = 0;  //*/
-   FCapacity = Count;
-   List.Capacity = Count * 2;
+   Indexes.Cell[i][j] = value;
 }
 //---------------------------------------------
 //Деструктор
 template<class T> ElectraIndexes <T>::~ElectraIndexes()
 {
-   if (FIndex)
-   {
-      for (int i=0; i<FCapacity; i++)
-         free ( FIndex[i] );
-      free ( FIndex );
-      FIndex = NULL;
-      FCapacity = 0;
-   }
 }
 //---------------------------------------------------------------------------
 //Класс Электра
 //---------------------------------------------------------------------------
 //Конструктор
-Electra::Electra() : Alternatives(A, &BaseNew) , Kriterias(K, &BaseNew)//, Concordance.List(true), Discordance.List(false)
+Electra::Electra()// : A(Alternatives.Count)//, K(Kriterias.Count) //Alternatives(A, &BaseNew) , Kriterias(K, &BaseNew)//, Concordance.List(true), Discordance.List(false)
 {
-   A = 0;
-   K = 0;
-   Ratings = NULL;
-   //FRunOk = false;
    Version = ElectraI;
    Concordance.List.Invert();
-   //Concordance.List.SortAccordingIncrease = false;
-   //Discordance.List.SortAccordingIncrease = true;
    Optimal = NULL;
-}
-//---------------------------------------------
-//Обнулить
-void Electra::Clear()
-{
-   A = 0;
-   K = 0;
-   Concordance.List.Clear();
-   Discordance.List.Clear();
-}
-//Деструктор
-Electra::~Electra()
-{
-   if (Ratings)
-   {
-      for (int i=0; i<Alternatives.Capacity; i++)
-         free ( Ratings[i] );
-      free ( Ratings );
-      Ratings = NULL;
-   }
-   if (Optimal)
-      free (Optimal);
-   Optimal = NULL;
-}
-//---------------------------------------------
-void Electra::BaseNew()
-{
-   if ((A != 0)&&(K != 0))
-      New(A, K);
-}
-//---------------------------------------------
-//Создание новой таблицы оценок или изменение размеров старой Rating[A][K]
-void Electra::New(int NewAltCount, int NewKritCount)
-{
-   int KC = Kriterias.Capacity;
-   int AC = Alternatives.Capacity;
-   if( KC < NewKritCount )
-      Kriterias.New(NewKritCount);
-   if ( AC < NewAltCount )
-      Alternatives.New(NewAltCount);
-   if ( Ratings )
-   {
-      if( KC < NewKritCount )
-         for (int i=0; i<AC; ++i)
-            Ratings[i] = (int*)realloc(Ratings[i], NewKritCount * sizeof(int));
-
-      if ( AC < NewAltCount )
-      {
-         Ratings = (int**)realloc(Ratings, NewAltCount * sizeof(int*));
-         int MaxK = ( KC > NewKritCount ) ? KC : NewKritCount ;
-         for (int i=AC; i<NewAltCount; ++i)
-            Ratings[i] = (int*)malloc(MaxK * sizeof(int));  ///
-      }
-   }
-   else //Во - первых
-   {
-      Ratings = (int**)malloc(NewAltCount * sizeof(int*));
-      for (int i=0; i<NewAltCount; i++)
-         Ratings[i] = (int*)malloc(NewKritCount * sizeof(int));
-   }
-   A = NewAltCount;
-   K = NewKritCount;
-   if ( KC < NewKritCount )
-   {
-         for (int i=0; i<AC; ++i)
-            for (int j=KC; j<NewKritCount; ++j)
-               Ratings[i][j] = 0;
-        //Kriterias.FCapacity = NewKritCount;
-   }
-   if ( AC < NewAltCount )
-   {
-         for (int i=AC; i<NewAltCount; ++i)
-            for (int j=0; j<KC; ++j)
-               Ratings[i][j] = 0;
-      //Alternatives.FCapacity = NewAltCount;
-   }
-}           
-//---------------------------------------------
-bool Electra::CheckIndexes(int Aidx, int Kidx)
-{
-   //if ((A < 0)||(K < 0))
-   //{        return false;     }
-   if ((Kidx >= K )|| (Aidx >= A))
-   {        return false;     }
-   return true;
 }
 //---------------------------------------------
 int Electra::GetRating (int i, int j)
 {
-   if (CheckIndexes(i, j))
-      return Ratings[i][j];
-   else
-      return -1;     
+   return Ratings.Cell[i][j];   
 }
 //---------------------------------------------
 void Electra::SetRating (int i, int j, int value)
 {
-   if (CheckIndexes(i, j))
-      Ratings[i][j] = value;
-}
-//---------------------------------------------
-void Electra::CreateIndexes()
-{
-   if (Concordance.Capacity != A)
-      Concordance.Create(A);
-   if (Discordance.Capacity != A)
-      Discordance.Create(A);  
+   if (Ratings.RowCount < Alternatives.Count)
+      Ratings.RowCount = Alternatives.Count;
+   if (Ratings.ColCount < Kriterias.Count)
+      Ratings.ColCount = Kriterias.Count;
+   Ratings.Cell[i][j] = value;
 }
 //---------------------------------------------
 bool Electra::VerionComparison()
@@ -258,13 +74,26 @@ bool Electra::VerionComparison()
    return true;
 }
 //---------------------------------------------
-void Electra::Run()
+int Electra::CalcIndexes()
 {   
    //Подсчет индексов согласия
-   if ((Concordance.Capacity <= 0)||(Discordance.Capacity <= 0))
-      return; 
-   if (K <= 0)
-      return;
+   if ((A <= 0)||(K <= 0))
+      return 0;
+   if (Ratings.RowCount < A)
+      return -1;
+   if (Ratings.ColCount < K)
+      return -2;
+   if (Concordance.Indexes.Size < A)
+   {
+      int pr = Concordance.Indexes.Size;
+      Concordance.Indexes.Size = A;
+      Discordance.Indexes.Size = A;
+      for (; pr<A; ++pr)
+      {
+         Concordance.SetIndex(pr, pr, 0);
+         Discordance.SetIndex(pr, pr, 0);
+      }
+   }
    Concordance.List.Clear();
    Discordance.List.Clear();
    //Concordance.List.Add(0);
@@ -280,16 +109,18 @@ void Electra::Run()
          //Discordance.Index[Aing][Aed] = 0;
          for (int kr=0; kr<K; kr++)
          {           
-            if (Ratings[Aing][kr] >= Ratings[Aed][kr])    //Вот этот знак
+            if (Ratings.Cell[Aing][kr] >= Ratings.Cell[Aed][kr])    //Вот этот знак
             {
                Cidx += Kriterias[kr].weight;
                //Concordance.Index[Aing][Aed] += Kriterias[kr].weight;
             }
             else
             {
-               double Lb = Ratings[Aed][kr];
-               double La = Ratings[Aing][kr];
+               double Lb = Ratings.Cell[Aed][kr];
+               double La = Ratings.Cell[Aing][kr];
                double Li = Kriterias[kr].scale;
+               if (Li <= 0)
+                  Li=1;
                //double idx = (double(Ratings[Aed][kr] - Ratings[Aing][kr]))/Kriterias[kr].scale;
                double idx = (Lb - La)/Li;
                if (idx > Nidx)
@@ -301,8 +132,8 @@ void Electra::Run()
          //Индексы расчитаны
          //Concordance[Aing][Aed] = Cidx;
          //Concordance.Index(Aing,Aed) = Cidx;
-         Concordance.Index[Aing][Aed] = Cidx;
-         Discordance.Index[Aing][Aed] = Nidx;
+         Concordance.SetIndex(Aing, Aed, Cidx);
+         Discordance.SetIndex(Aing, Aed, Nidx);
          //Concordance.List.Add(Concordance.Index[Aing][Aed]);
          //Discordance.List.Add(Discordance.Index[Aing][Aed]);
       }
@@ -311,6 +142,7 @@ void Electra::Run()
       CMax += Kriterias[kr].weight;
    Concordance.List.Add(CMax);
    //FRunOk = true;
+   return A;
 }
 //---------------------------------------------
 void Electra::GenerateCore(int Cind, double NCind,  int &idx)
@@ -414,7 +246,9 @@ bool Electra::LoadFromText(char *FileName)     //Функция загружает список из тек
    int NL;
 	fscanf(file, "A=%d ", &Ain);
    fscanf(file, "K=%d ", &Kin);
-   New(Ain, Kin);
+//////////////   New(Ain, Kin);
+   Kriterias.Count = Kin;
+   Alternatives.Count = Ain;
    for (int i=0; i<Kin-1; ++i)
       //char Buff[80];      fscanf(file, "%s ", &Buff);       //ShowMessage(Buff);
       //Kriterias[i].name = ("Krit"+IntToStr(i)).c_str();
@@ -436,10 +270,10 @@ bool Electra::LoadFromText(char *FileName)     //Функция загружает список из тек
       {
          //fscanf(file, "%d ", &Ratings[i][j]);
          fscanf(file, "%d ", &sc);
-         Ratings[i][j] = sc;
+         Ratings.Cell [i][j] = sc;
       }
       fscanf(file, "%d ", &sc);
-      Ratings[i][Kin-1] = sc;
+      Ratings.Cell[i][Kin-1] = sc;
       //fscanf(file, "\n%*");
    }
 
@@ -447,6 +281,30 @@ bool Electra::LoadFromText(char *FileName)     //Функция загружает список из тек
 	return true;
  }
 //---------------------------------------------
+//Обнулить
+void Electra::Clear()
+{
+   Alternatives.Clear();
+   Kriterias.Clear();
+   Ratings.Clear();
+   Concordance.Indexes.Clear();
+   Discordance.Indexes.Clear();
+   Concordance.List.Clear();
+   Discordance.List.Clear();
+}
+//---------------------------------------------
+//Деструктор
+Electra::~Electra()
+{
+   if (Optimal)
+      free (Optimal);
+   Optimal = NULL;
+}
+//---------------------------------------------*/
 #pragma package(smart_init)
+
+
+
+
 
 

@@ -53,8 +53,6 @@
  #define TEMPLT
  #define T int
 #endif
-#include <alloc.h>
-#include <mem.h>
 
 // Динамический массив
 TEMPLT class LARKINARRAY
@@ -63,6 +61,9 @@ private:
 	T *Data;    //Одномерный массив
 	int FCapacity; //Размер выделенной памяти
 	int FCount; //Число элементов в массиве (может быть меньше размера выделенной памяти)
+   //Защита от копирования
+   LARKINARRAY(const LARKINARRAY&) ;
+   LARKINARRAY&operator=(const LARKINARRAY&) ;
    #ifdef LRArrayAutoSort
       #ifdef LRArraySimpleType
       bool FSortingAccordIncrease;
@@ -136,33 +137,12 @@ public:
       else
          FCapacity = 0;
 	}
-   LARKINARRAY(const LARKINARRAY& Array)
-   {
-      #ifdef LRArrayAutoSort
-      FSortingAccordIncrease = Array.SortingAccordIncrease;
-      #endif
-      Data = 0;
-      Capacity = Array.Capacity;
-      FCount = Array.Count;
-      for (int i=0; i<FCount; ++i)
-         ConstructCopy(i, Array[i]);
-   }
-   LARKINARRAY&operator=(const LARKINARRAY& rhs)
-   {
-      SetCount(0);
-      #ifdef LRArrayAutoSort
-      FSortingAccordIncrease = rhs.SortingAccordIncrease;
-      #endif
-      Data = 0;
-      Capacity = rhs.Capacity;
-      FCount = rhs.Count;
-      for (int i=0; i<FCount; ++i)
-         ConstructCopy(i, rhs[i]);
-   }
+
    ~LARKINARRAY()
 	{
       Free();
 	}
+
    #ifdef LRArrayAutoSort
    //Добавить элемент в массив
    void Add(const T& el)
@@ -266,7 +246,8 @@ public:
       }
       #ifdef LRArrayAutoSort
       FSortingAccordIncrease = !FSortingAccordIncrease;
-      #endif   
+      #endif
+
    }
 
    #ifdef LRArrayAutoSort
@@ -278,7 +259,7 @@ public:
       #ifdef LRArraySimpleType
       Data[i] = el;
       #else
-      new  (&Data[i]) T( el );  //
+      new  (&Data[i]) T( el );  //Конструктор не вызывается
       #endif
 	}
    #ifdef LRArrayAutoSort
