@@ -2,12 +2,9 @@
 
 #include <vcl.h>
 #pragma hdrstop
-#include "ElectraMethod.cpp"
 #include "MainCode.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
-#pragma link "CSPIN"
-#pragma link "WinXP"
 #pragma resource "*.dfm"
 TForm1 *Form1;
 //---------------------------------------------------------------------------
@@ -27,29 +24,29 @@ __fastcall TForm1::TForm1(TComponent* Owner)  : TForm(Owner)
    FA = 0; A1 = 1;
    FK = 0; K1 = 1;
    SheetBegins->Show();
-   //electra.New(nAlt->Value, nKrit->Value);
-   nAltChange(NULL);
-   nKritChange(NULL);
+   //electra.New(nAlt->Position, nKrit->Position);
+	eAltChange(NULL);
+   eKritChange(NULL);
    DataChange[DATARAT] = false;
    OpenDialog1->InitialDir = GetCurrentDir();
    SaveDialog1->InitialDir = GetCurrentDir();  
-   //electra.Kriterias[1].
-   ScrollsClick(NULL);
-   Panel1->Top = TrackBar1->Top + 4;
-   Panel2->Top = TrackBar2->Top + 4;
-   ScrollBar2->Width = 661;
-   //electra.Concordance[0][3] = 2;
+	//electra.Kriterias[1].
+	ScrollsClick(NULL);
+	Panel1->Top = TrackBar1->Top + 4;
+	Panel2->Top = TrackBar2->Top + 4;
+	ScrollBar2->Width = 661;
+	//electra.Concordance[0][3] = 2;
 }
 //---------------------------------------------------------------------------
 //Изменилось количество альтернатив
-void __fastcall TForm1::nAltChange(TObject *Sender)
+void __fastcall TForm1::eAltChange(TObject *Sender)
 {
-   if (A == nAlt->Value)
-      return;
-   DataChange[DATAA] = true;
-   A = nAlt->Value;
-   for (int i=1; i<A1; i++)
-   {
+	if (A == nAlt->Position)
+		return;
+	DataChange[DATAA] = true;
+	A = nAlt->Position;
+	for (int i=1; i<A1; i++)
+	{
       Alternatives->Cells[IC][i] = i;
       if (Alternatives->Cells[NC][i] == "")
       {
@@ -57,16 +54,16 @@ void __fastcall TForm1::nAltChange(TObject *Sender)
          for (int j=1; j<K1; ++j)
             Ratings->Cells[i][j] = "0";
       }
-   }
+	}
 }
 //---------------------------------------------------------------------------
 //Изменилось количество критериев
-void __fastcall TForm1::nKritChange(TObject *Sender)
+void __fastcall TForm1::eKritChange(TObject *Sender)
 {
-   if (K == nKrit->Value)
-      return;
+	if (K == nKrit->Position)
+		return;
    DataChange[DATAK] = true;
-   K = nKrit->Value;    
+   K = nKrit->Position;
    for (int i=1; i<K1; i++)
    {
       Kriterias->Cells[IC][i] = i;
@@ -78,7 +75,7 @@ void __fastcall TForm1::nKritChange(TObject *Sender)
          for (int j=1; j<A1; ++j)
             Ratings->Cells[j][i] = "0";
       }
-   }
+	}
 }
 //---------------------------------------------------------------------------
 //Переход на новую страницу (срабатывает прежде чем Show)
@@ -90,20 +87,20 @@ if ( DataChange[DATAA] )
       electra.Alternatives.Count = A;
       for (int i=0; i<A; ++i)
       {
-         electra.Alternatives[i].Name = Alternatives->Cells[SNAME][i+1].c_str();
+			electra.Alternatives[i].Name = Alternatives->Cells[SNAME][i+1];
          Ratings->Cells[i+1][0] = Alternatives->Cells[SNAME][i+1];
       }   
       DataChange[DATAA] = false;
-   }
+	}
 //Было изменено параметры критерия
 if ( DataChange[DATAK] )
    {
       electra.Kriterias.Count = K;
       for (int i=0; i<K; ++i)
       {
-         try
-         {
-            //electra.Kriterias[i].Name = Kriterias->Cells[SNAME][i+1].c_str();
+			try
+			{
+				electra.Kriterias[i].Name = Kriterias->Cells[SNAME][i+1];
             electra.Kriterias[i].weight = StrToInt(Kriterias->Cells[SWE][i+1]);
             electra.Kriterias[i].scale = StrToInt(Kriterias->Cells[SSC][i+1]);
          }
@@ -168,17 +165,17 @@ void __fastcall TForm1::OpenBtnClick(TObject *Sender)
       K = electra.K;
       SheetBegins->Show();
       //SetNames->SetFocus();
-      nAlt->Value = A;
-      nKrit->Value = K;
+		nAlt->Position = A;
+      nKrit->Position = K;
       //SheetRatingsShow(Sender);
       for (int i=0; i<electra.A; i++)
       {
          //ShowMessage(electra.Alternatives[i].name);
-         //Alternatives->Cells[SNAME][i+1] = electra.Alternatives[i].name;
+			Alternatives->Cells[SNAME][i+1] = electra.Alternatives[i].Name;
       }
       for (int j = 0; j < electra.Kriterias.Count; j++)
       {
-         //Kriterias->Cells[SNAME][j+1] = electra.Kriterias[j].name;
+         Kriterias->Cells[SNAME][j+1] = electra.Kriterias[j].Name;
          Kriterias->Cells[SWE][j+1] = electra.Kriterias[j].weight;
          Kriterias->Cells[SSC][j+1] = electra.Kriterias[j].scale;
          for (int i = 0; i < electra.Alternatives.Count; i++)

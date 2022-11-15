@@ -15,11 +15,13 @@
 //#include <conio.h>  //*/
 #include <stdio.h>   //для fopen
 #include <alloc.h>
-#include <string.h>
+//#include <string.h>
 #include <mem.h>
-#include <system.hpp>
-#pragma hdrstop   
+//#include <system.hpp>
+#pragma hdrstop
 #include "ElectraMethod.h"
+//---------------------------------------------------------------------------
+
 //---------------------------------------------------------------------------
 //ElectraIndexes - Базовый класс для индексов согласия и несогласия
 //---------------------------------------------------------------------------
@@ -57,7 +59,7 @@ Electra::Electra()// : A(Alternatives.Count)//, K(Kriterias.Count) //Alternative
 //---------------------------------------------
 int Electra::GetRating (int i, int j)
 {
-   return Ratings.Cell[i][j];   
+   return Ratings.Cell[i][j];
 }
 //---------------------------------------------
 void Electra::SetRating (int i, int j, int value)
@@ -75,7 +77,7 @@ bool Electra::VerionComparison()
 }
 //---------------------------------------------
 int Electra::CalcIndexes()
-{   
+{
    //Подсчет индексов согласия
    if ((A <= 0)||(K <= 0))
       return 0;
@@ -108,7 +110,7 @@ int Electra::CalcIndexes()
          ///Concordance.Index[Aing][Aed] = 0;
          //Discordance.Index[Aing][Aed] = 0;
          for (int kr=0; kr<K; kr++)
-         {           
+         {
             if (Ratings.Cell[Aing][kr] >= Ratings.Cell[Aed][kr])    //Вот этот знак
             {
                Cidx += Kriterias[kr].weight;
@@ -199,84 +201,92 @@ void Electra::Calc()
          Alternatives[i].Core = Core;
          Optimal[CurrAlt] = &Alternatives[i];
       }
-   }  
+   }
 }
 //---------------------------------------------
 
 bool Electra::SaveAsText(char *FileName)   //Функция сохраняет список в текстовый файл
 {
-   FILE *file = fopen(FileName, "w");
+	FILE *file = fopen(FileName, "wt");
 	if (!file)
-	{
-		//ShowMessage ( "Cannot create text file");
 		return false;
-	}
-        //Node *Item = Record;
-
 	fprintf(file, "A=%d ", A);
-   fprintf(file, "K=%d\n", K);
-
-   for (int i=0; i<K; ++i)
-      //fprintf(file, "%s ", Kriterias[i].name);
-      fprintf(file, "%d ", Kriterias[i].weight);
-   fprintf(file, "\n");
-   for (int i=0; i<K; ++i)
-      fprintf(file, "%d ", Kriterias[i].scale);   
-   fprintf(file, "\n+\n");
+	fprintf(file, "K=%d\n", K);
+	//TODO:a че с пробелами????
+	for (int i=0; i<K; ++i)
+	{
+		for (int s=1; s <= Kriterias[i].Name.Length(); ++s)
+			if (Kriterias[i].Name[s] == ' ')
+				Kriterias[i].Name[s] = '_';
+		fprintf(file, "%s ", Kriterias[i].Name);//.c_str()); можно и так
+		fprintf(file, "%d ", Kriterias[i].weight);
+		fprintf(file, "%d ", Kriterias[i].scale);
+		fprintf(file, "\n");
+	}
+	fprintf(file, "\n");
 	for (int i = 0; i < A; ++i)
-   {
-      //fprintf(file, "%s ", Alternatives[i].name);
-      for (int j = 0; j < K; ++j)
-         fprintf(file, "%d ", Ratings[i][j]);
+	{
+		for (int s=1; s <= Alternatives[i].Name.Length(); ++s)
+			if (Alternatives[i].Name[s] == ' ')
+				Alternatives[i].Name[s] = '_';
+		fprintf(file, "%s ", Alternatives[i].Name);
+		for (int j = 0; j < K; ++j)
+			fprintf(file, "%d ", Ratings[i][j]);
       fprintf(file, "\n");
-   }
+	}
 	fclose(file);
 	return true;
 }
 //---------------------------------------------
 bool Electra::LoadFromText(char *FileName)     //Функция загружает список из текстового файла
 {
-   FILE *file = fopen(FileName, "r");
+   FILE *file = fopen(FileName, "rt");
 	if (!file)
 	{
 		printf ( "Cannot open text file");
 		return false;
 	}
-   int Ain, Kin;
-   int NL;
+	int Ain, Kin;
 	fscanf(file, "A=%d ", &Ain);
    fscanf(file, "K=%d ", &Kin);
 //////////////   New(Ain, Kin);
    Kriterias.Count = Kin;
-   Alternatives.Count = Ain;
-   for (int i=0; i<Kin-1; ++i)
-      //char Buff[80];      fscanf(file, "%s ", &Buff);       //ShowMessage(Buff);
-      //Kriterias[i].name = ("Krit"+IntToStr(i)).c_str();
-      fscanf(file, "%d ", &Kriterias[i].weight);
-   fscanf(file, "%d\n", &Kriterias[Kin-1].weight);
-   for (int i=0; i<Kin-1; ++i)
-      fscanf(file, "%d ", &Kriterias[i].scale);
-   fscanf(file, "%d\n+\n", &Kriterias[Kin-1].scale);
-   //fscanf(file, "%*\n+\n", &NL);
-   int sc = 0;
+	Alternatives.Count = Ain;
+	char name[80];
+	for (int i=0; i<Kin; ++i)
+	{
+
+		fscanf(file, "%s ", &name);
+		Kriterias[i].Name = name;
+		fscanf(file, "%d ", &Kriterias[i].weight);
+		fscanf(file, "%d ", &Kriterias[i].scale);
+		fscanf(file, "\n");
+	}
+	//fscanf(file, "%d\n", &Kriterias[Kin-1].weight);
+	//for (int i=0; i<Kin-1; ++i)
+	//fscanf(file, "%d\n+\n", &Kriterias[Kin-1].scale);
+	//fscanf(file, "%*\n+\n", &NL);
+	fscanf(file, "\n");
+	int sc;
    for (int i = 0; i < Ain; ++i)
    {
-      //char Buff[80];      fscanf(file, "%s ", &Buff);
-      //fscanf(file, "%s ", &Alternatives[i].name);
+		fscanf(file, "%s ", &name);
+		Alternatives[i].Name = name;
+		//fscanf(file, "%s ", &Alternatives[i].name);
       //Alternatives[i].name = Buff;
       //Alternatives[i].name = ("Alt"+IntToStr(i)).c_str();
       Alternatives[i].Core = -1;
-      for (int j = 0; j < Kin-1; ++j)
+		for (int j = 0; j < Kin; ++j)
       {
          //fscanf(file, "%d ", &Ratings[i][j]);
-         fscanf(file, "%d ", &sc);
-         Ratings.Cell [i][j] = sc;
-      }
-      fscanf(file, "%d ", &sc);
-      Ratings.Cell[i][Kin-1] = sc;
+			fscanf(file, "%d ", &sc);
+			Ratings.Cell[i][j] = sc;
+		}
+		fscanf(file, "\n");
+		//fscanf(file, "%d ", &sc);
+		//Ratings.Cell[i][Kin-1] = sc;
       //fscanf(file, "\n%*");
    }
-
 	fclose(file);
 	return true;
  }
@@ -302,9 +312,3 @@ Electra::~Electra()
 }
 //---------------------------------------------*/
 #pragma package(smart_init)
-
-
-
-
-
-

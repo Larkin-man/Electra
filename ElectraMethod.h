@@ -74,7 +74,7 @@ private:
       {
          if ( strlen(rhs) > strlen(FName) )
             FName = (char *) realloc(FName, strlen(rhs)+1);
-         strcpy(FName, rhs);   
+         strcpy(FName, rhs);
       }
       else
          FName = strdup(rhs);
@@ -91,7 +91,7 @@ public:
 typedef struct MemKrit
 {
 public:
-   char *name;
+	AnsiString Name; //char *name;
    int weight;
    int scale;
 } DataKriterias;
@@ -109,7 +109,7 @@ private:
    Electra(const Electra& copy);
    operator =(const Electra& copy);
 
-protected:    
+protected:
    int  GetRating (int i, int j);
    void SetRating (int i, int j, int value);
    void GenerateCore(int Cind, double NCind, int &idx);
@@ -123,13 +123,13 @@ public:
    __property int A = {read=GetA};
    __property int K = {read=GetK};
    LRDynArray <DataAlternatives> Alternatives;
-   LRDynArray <DataKriterias> Kriterias;         
+   LRDynArray <DataKriterias> Kriterias;
    __property int Rating [int i][int j] = {read=GetRating, write=SetRating}; //Rating[A][K]
    ElectraIndexes <int> Concordance;
    ElectraIndexes <double> Discordance;
    ElectraVersion Version;
    int CalcIndexes(); //Возвращает кол-во альтернатив в случае успеха.
-   __property DataAlternatives OptimalList [int i] = {read = GetOptimal};   
+   __property DataAlternatives OptimalList [int i] = {read = GetOptimal};
    bool SaveAsText(char *FileName);
    bool LoadFromText(char *FileName);
    //__property bool RunOk = { read=FRunOk };
@@ -139,7 +139,6 @@ public:
 };
 /*Работа
 1) Задать критерии и альтернативы
-Alternatives.Count или [] 
+Alternatives.Count или []
 */
 #endif
-

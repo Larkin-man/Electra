@@ -12,14 +12,10 @@
 #include <Grids.hpp>
 #include <Buttons.hpp>
 #include <math.h>
-#include "ElectraMethod.h"
-#include "ConstElec.h"
-
+#include "ElectraMethod.cpp"
 #include <ToolWin.hpp>
 #include <Dialogs.hpp>
 #include <Mask.hpp>
-#include "CSPIN.h"
-#include "WinXP.hpp"
 //Константы идентификаторы столбцов
 const int SNM = 0;
 const int SNAME = 1;
@@ -36,13 +32,15 @@ const int KRITCOUNT = 1;
 const int DATAA = 2;
 const int DATAK = 3;
 const int DATARAT = 4;
+//StringGrid columns
+const IC = 0;
+const NC = 1;
+const WC = 2;
+const LC = 3;
 //---------------------------------------------------------------------------
 class TForm1 : public TForm
 {
 __published:	// IDE-managed Components
-   TToolBar *ToolBar1;
-   TSpeedButton *OpenBtn;
-   TSpeedButton *SaveBtn;
    TOpenDialog *OpenDialog1;
    TSaveDialog *SaveDialog1;
    TPageControl *PageControl1;
@@ -72,10 +70,6 @@ __published:	// IDE-managed Components
    TButton *Calc;
    TStaticText *ModRat;
    TPanel *Panel3;
-   TLabel *LA;
-   TCSpinEdit *nAlt;
-   TLabel *LK;
-   TCSpinEdit *nKrit;
    TSplitter *Splitter1;
    TPanel *Panel4;
    TLabel *Label5;
@@ -85,9 +79,12 @@ __published:	// IDE-managed Components
    TLabel *Label3;
    TStringGrid *Soglas;
    TButton *RunBtn;
-   TWinXP *WinXP1;
-   void __fastcall nAltChange(TObject *Sender);
-   void __fastcall nKritChange(TObject *Sender);
+	TLabeledEdit *eAlt;
+	TLabeledEdit *eKrit;
+	TUpDown *nAlt;
+	TUpDown *nKrit;
+	TSpeedButton *OpenBtn;
+	TSpeedButton *SaveBtn;
    void __fastcall SaveBtnClick(TObject *Sender);
    void __fastcall OpenBtnClick(TObject *Sender);
    void __fastcall PageControl1Changing(TObject *Sender,
@@ -106,6 +103,8 @@ __published:	// IDE-managed Components
    void __fastcall AlternativesKeyPress(TObject *Sender, char &Key);
    void __fastcall KriteriasKeyPress(TObject *Sender, char &Key);
    void __fastcall RatingsKeyPress(TObject *Sender, char &Key);
+	void __fastcall eAltChange(TObject *Sender);
+	void __fastcall eKritChange(TObject *Sender);
 private:	// User declarations
    //bool FPageChange[5];
    bool FDataChange[5];
